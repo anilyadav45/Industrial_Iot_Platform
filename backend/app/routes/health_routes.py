@@ -4,6 +4,14 @@ from app.extensions import db
 health_bp = Blueprint("health", __name__)
 
 
+@health_bp.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "name": "Industrial IoT & Cloud Resource Optimization Platform",
+        "status": "running"
+    })
+
+
 @health_bp.route("/api/health", methods=["GET"])
 def health_check():
 

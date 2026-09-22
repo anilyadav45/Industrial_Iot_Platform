@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from app.config import Config
-from app.extensions import db
+from app.extensions import db, migrate
 from app.routes.health_routes import health_bp
 
 
@@ -14,6 +14,7 @@ def create_app():
     CORS(app)
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     app.register_blueprint(health_bp)
 

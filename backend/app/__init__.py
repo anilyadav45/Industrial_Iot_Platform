@@ -6,6 +6,12 @@ from app.extensions import db, migrate
 from app.routes.health_routes import health_bp
 from app.routes.auth_routes import auth_bp
 from app.routes.user_routes import user_bp
+from app.routes.admin_routes import admin_bp
+from app.routes.organization_routes import organization_bp
+from app.routes.factory_routes import factory_bp
+from app.routes.production_line_routes import production_line_bp
+from app.routes.machine_routes import machine_bp
+from app.routes.sensor_routes import sensor_bp
 
 import app.models
 
@@ -23,5 +29,11 @@ def create_app():
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(organization_bp)
+    app.register_blueprint(factory_bp)
+    app.register_blueprint(production_line_bp)
+    app.register_blueprint(machine_bp)
+    app.register_blueprint(sensor_bp)
 
     return app

@@ -18,7 +18,14 @@ def token_required(f):
             }), 401
 
         try:
-            token = auth_header.split(" ")[1]
+            parts = auth_header.split(" ")
+
+            if len(parts) != 2 or parts[0] != "Bearer":
+                return jsonify({
+                    "message": "Invalid authorization format"
+                }), 401
+
+            token = parts[1]
 
             payload = decode_token(token)
 
@@ -33,3 +40,24 @@ def token_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+def role_required(*allowed_roles):
+
+    def decorator(f):
+
+        @wraps(f)
+        def decorated(*args, **kwargs):
+
+            if request.user_role not in allowed_roles:
+                return jsonify({
+                    "message": "Access denied",
+                    "required_roles": list(allowed_roles),
+                    "your_role": request.user_role
+                }), 403
+
+            return f(*args, **kwargs)
+
+        return decorated
+
+    return decorator

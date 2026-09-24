@@ -17,7 +17,9 @@ class Sensor(db.Model):
         nullable=False
     )
 
-    unit = db.Column(db.String(50))
+    unit = db.Column(
+        db.String(50)
+    )
 
     status = db.Column(
         db.String(30),
@@ -34,4 +36,10 @@ class Sensor(db.Model):
     machine = db.relationship(
         "Machine",
         back_populates="sensors"
+    )
+
+    readings = db.relationship(
+        "SensorReading",
+        back_populates="sensor",
+        cascade="all, delete-orphan"
     )

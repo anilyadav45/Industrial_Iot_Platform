@@ -1,32 +1,52 @@
-import { useEffect, useState } from "react";
-import api from "./services/api";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+import AdminLayout from "./layouts/AdminLayout";
+
+import Login from "./pages/auth/Login";
+
+import Dashboard from "./pages/admin/Dashboard";
+import Organizations from "./pages/admin/Organizations";
 
 function App() {
-  const [message, setMessage] = useState("Connecting...");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    api
-      .get("/api/health")
-      .then((response) => {
-        console.log("Backend response:", response.data);
-        setMessage(response.data.message);
-      })
-      .catch((error) => {
-        console.error("Backend error:", error);
-        console.error("Response:", error.response);
-        setError(error.message);
-      });
-  }, []);
-
   return (
-    <div>
-      <h1>Industrial IoT Platform</h1>
+    <BrowserRouter>
+      <Routes>
 
-      <p>{message}</p>
+        {/* Login */}
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-      {error && <p>Backend connection failed: {error}</p>}
-    </div>
+        {/* Admin */}
+        <Route
+          path="/admin"
+          element={<AdminLayout />}
+        >
+          <Route
+            index
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="organizations"
+            element={<Organizations />}
+          />
+        </Route>
+
+        {/* Default */}
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
+        />
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 

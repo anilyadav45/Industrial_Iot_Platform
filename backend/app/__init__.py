@@ -12,6 +12,10 @@ from app.routes.factory_routes import factory_bp
 from app.routes.production_line_routes import production_line_bp
 from app.routes.machine_routes import machine_bp
 from app.routes.sensor_routes import sensor_bp
+from app.routes.sensor_reading_routes import sensor_reading_bp
+from app.routes.dataset_routes import dataset_bp
+from app.routes.analytics_routes import analytics_bp
+
 
 import app.models
 
@@ -35,5 +39,8 @@ def create_app():
     app.register_blueprint(production_line_bp)
     app.register_blueprint(machine_bp)
     app.register_blueprint(sensor_bp)
+    app.register_blueprint(sensor_reading_bp)
+    app.register_blueprint(dataset_bp)
+    app.register_blueprint(analytics_bp)
 
     return app

@@ -5,3 +5,5 @@ from app.models.factory import Factory
 from app.models.production_line import ProductionLine
 from app.models.machine import Machine
 from app.models.sensor import Sensor
+from app.models.sensor_reading import SensorReading
+from app.models.dataset import Dataset

@@ -7,3 +7,7 @@ from app.models.machine import Machine
 from app.models.sensor import Sensor
 from app.models.sensor_reading import SensorReading
 from app.models.dataset import Dataset
+from app.models.alert import Alert
+from app.models.machine_prediction import MachinePrediction
+from app.models.cloud_resource import CloudResource
+from app.models.optimization_recommendation import OptimizationRecommendation

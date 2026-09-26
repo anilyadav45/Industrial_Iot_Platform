@@ -4,6 +4,7 @@ from app.extensions import db
 from app.models.sensor_reading import SensorReading
 from app.models.sensor import Sensor
 from app.utils.decorators import token_required, role_required
+from app.services.alert_service import check_sensor_reading
 
 
 sensor_reading_bp = Blueprint(
@@ -49,79 +50,32 @@ def create_reading():
     db.session.add(reading)
     db.session.commit()
 
+    # Check whether this reading triggers an alert
+    alert = check_sensor_reading(
+        sensor_id=sensor_id,
+        value=float(value)
+    )
+
+    reading_response = {
+        "id": reading.id,
+        "sensor_id": reading.sensor_id,
+        "timestamp": reading.timestamp,
+        "value": reading.value
+    }
+
+    # Add alert information if threshold was exceeded
+    if alert:
+        reading_response["alert"] = {
+            "id": alert.id,
+            "alert_type": alert.alert_type,
+            "severity": alert.severity,
+            "message": alert.message,
+            "value": alert.value,
+            "threshold": alert.threshold,
+            "status": alert.status
+        }
+
     return jsonify({
         "message": "Sensor reading created",
-        "reading": {
-            "id": reading.id,
-            "sensor_id": reading.sensor_id,
-            "timestamp": reading.timestamp,
-            "value": reading.value
-        }
+        "reading": reading_response
     }), 201
-
-
-# Get readings
-@sensor_reading_bp.route("", methods=["GET"])
-@token_required
-@role_required(
-    "SUPER_ADMIN",
-    "FACTORY_ADMIN",
-    "ENGINEER",
-    "OPERATOR"
-)
-def get_readings():
-
-    readings = (
-        SensorReading.query
-        .order_by(SensorReading.timestamp.desc())
-        .all()
-    )
-
-    return jsonify([
-        {
-            "id": reading.id,
-            "sensor_id": reading.sensor_id,
-            "timestamp": reading.timestamp,
-            "value": reading.value
-        }
-        for reading in readings
-    ]), 200
-
-
-# Get readings for specific sensor
-@sensor_reading_bp.route(
-    "/sensor/<int:sensor_id>",
-    methods=["GET"]
-)
-@token_required
-@role_required(
-    "SUPER_ADMIN",
-    "FACTORY_ADMIN",
-    "ENGINEER",
-    "OPERATOR"
-)
-def get_sensor_readings(sensor_id):
-
-    sensor = Sensor.query.get(sensor_id)
-
-    if not sensor:
-        return jsonify({
-            "message": "Sensor not found"
-        }), 404
-
-    readings = (
-        SensorReading.query
-        .filter_by(sensor_id=sensor_id)
-        .order_by(SensorReading.timestamp.desc())
-        .all()
-    )
-
-    return jsonify([
-        {
-            "id": reading.id,
-            "sensor_id": reading.sensor_id,
-            "timestamp": reading.timestamp,
-            "value": reading.value
-        }
-        for reading in readings
-    ]), 200

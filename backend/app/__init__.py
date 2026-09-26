@@ -15,6 +15,10 @@ from app.routes.sensor_routes import sensor_bp
 from app.routes.sensor_reading_routes import sensor_reading_bp
 from app.routes.dataset_routes import dataset_bp
 from app.routes.analytics_routes import analytics_bp
+from app.routes.alert_routes import alert_bp
+from app.routes.ml_routes import ml_bp
+from app.routes.cloud_resource_routes import cloud_resource_bp
+from app.routes.optimization_routes import optimization_bp
 
 
 import app.models
@@ -42,5 +46,12 @@ def create_app():
     app.register_blueprint(sensor_reading_bp)
     app.register_blueprint(dataset_bp)
     app.register_blueprint(analytics_bp)
+    app.register_blueprint(alert_bp)
+    app.register_blueprint(ml_bp)
+    app.register_blueprint(cloud_resource_bp)
+    app.register_blueprint(
+    optimization_bp
+    )
+    
 
     return app

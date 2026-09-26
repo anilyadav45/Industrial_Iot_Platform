@@ -43,3 +43,11 @@ class Sensor(db.Model):
         back_populates="sensor",
         cascade="all, delete-orphan"
     )
+
+    alerts = db.relationship(
+    "Alert",
+    back_populates="sensor",
+    cascade="all, delete-orphan"
+    )
+
+    

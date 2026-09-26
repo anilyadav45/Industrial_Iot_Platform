@@ -49,3 +49,15 @@ class Machine(db.Model):
         back_populates="machine",
         cascade="all, delete-orphan"
     )
+
+    alerts = db.relationship(
+    "Alert",
+    back_populates="machine",
+    cascade="all, delete-orphan"
+    )
+
+    predictions = db.relationship(
+    "MachinePrediction",
+    back_populates="machine",
+    cascade="all, delete-orphan"
+    )

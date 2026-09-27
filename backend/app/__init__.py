@@ -19,7 +19,10 @@ from app.routes.alert_routes import alert_bp
 from app.routes.ml_routes import ml_bp
 from app.routes.cloud_resource_routes import cloud_resource_bp
 from app.routes.optimization_routes import optimization_bp
+from app.routes.simulation_routes import simulation_bp
 
+from app.routes.audit_routes import audit_bp
+from app.routes.report_routes import report_bp
 
 import app.models
 
@@ -52,6 +55,8 @@ def create_app():
     app.register_blueprint(
     optimization_bp
     )
-    
+    app.register_blueprint(simulation_bp)
+    app.register_blueprint(audit_bp)
+    app.register_blueprint(report_bp)
 
     return app

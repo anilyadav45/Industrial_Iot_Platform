@@ -4,10 +4,7 @@ from app.extensions import db
 class OptimizationRecommendation(db.Model):
     __tablename__ = "optimization_recommendations"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     resource_id = db.Column(
         db.Integer,
@@ -58,6 +55,28 @@ class OptimizationRecommendation(db.Model):
         default="PENDING"
     )
 
+    acknowledged_by = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=True
+    )
+
+    acknowledged_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
+    resolved_by = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=True
+    )
+
+    resolved_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now(),
@@ -67,4 +86,14 @@ class OptimizationRecommendation(db.Model):
     resource = db.relationship(
         "CloudResource",
         back_populates="recommendations"
+    )
+
+    acknowledged_user = db.relationship(
+        "User",
+        foreign_keys=[acknowledged_by]
+    )
+
+    resolved_user = db.relationship(
+        "User",
+        foreign_keys=[resolved_by]
     )

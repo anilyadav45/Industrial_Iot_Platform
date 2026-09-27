@@ -91,61 +91,92 @@ def get_machine_features(machine_id):
 
     return machine, features
 
-
 def create_ml_alert(machine, prediction):
+    """
+    Create or reuse an ML alert for the current machine state.
+
+    Rules:
+    - High failure probability creates ML_FAILURE_RISK.
+    - Otherwise, anomaly detection creates ML_ANOMALY.
+    - Existing ACTIVE/ACKNOWLEDGED alert of the same type
+      is reused instead of creating a duplicate.
+    - RESOLVED alerts are not reused.
+    """
+
+    alert_type = None
+    severity = None
+    message = None
+    value = None
+    threshold = None
+
+    if prediction["failure_probability"] >= 0.70:
+
+        alert_type = "ML_FAILURE_RISK"
+        severity = "CRITICAL"
+
+        message = (
+            "ML model detected a high machine "
+            "failure risk."
+        )
+
+        value = prediction["failure_probability"]
+        threshold = 0.70
+
+    elif prediction["is_anomaly"]:
+
+        alert_type = "ML_ANOMALY"
+        severity = "WARNING"
+
+        message = (
+            "ML anomaly detection identified "
+            "an unusual machine state."
+        )
+
+        value = prediction["anomaly_score"]
+        threshold = 0.0
+
+    else:
+        return None
 
     existing_alert = (
         Alert.query
         .filter(
             Alert.machine_id == machine.id,
-            Alert.alert_type.in_([
-                "ML_FAILURE_RISK",
-                "ML_ANOMALY"
-            ]),
+            Alert.alert_type == alert_type,
             Alert.status.in_([
                 "ACTIVE",
                 "ACKNOWLEDGED"
             ])
         )
-        .order_by(Alert.created_at.desc())
+        .order_by(
+            Alert.created_at.desc()
+        )
         .first()
     )
 
     if existing_alert:
+
+        existing_alert.severity = severity
+
+        existing_alert.message = message
+
+        existing_alert.value = value
+
+        existing_alert.threshold = threshold
+
         return existing_alert
 
-    alert = None
+    alert = Alert(
+        machine_id=machine.id,
+        alert_type=alert_type,
+        severity=severity,
+        message=message,
+        value=value,
+        threshold=threshold,
+        status="ACTIVE"
+    )
 
-    if prediction["failure_probability"] >= 0.70:
-        alert = Alert(
-            machine_id=machine.id,
-            alert_type="ML_FAILURE_RISK",
-            severity="CRITICAL",
-            message=(
-                "ML model detected a high machine "
-                "failure risk."
-            ),
-            value=prediction["failure_probability"],
-            threshold=0.70,
-            status="ACTIVE"
-        )
-
-    elif prediction["is_anomaly"]:
-        alert = Alert(
-            machine_id=machine.id,
-            alert_type="ML_ANOMALY",
-            severity="WARNING",
-            message=(
-                "ML anomaly detection identified "
-                "an unusual machine state."
-            ),
-            value=prediction["anomaly_score"],
-            threshold=0.0,
-            status="ACTIVE"
-        )
-
-    if alert:
-        db.session.add(alert)
+    db.session.add(alert)
 
     return alert
 

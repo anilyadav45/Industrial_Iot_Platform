@@ -11,3 +11,4 @@ from app.models.alert import Alert
 from app.models.machine_prediction import MachinePrediction
 from app.models.cloud_resource import CloudResource
 from app.models.optimization_recommendation import OptimizationRecommendation
+from app.models.audit_log import AuditLog

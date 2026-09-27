@@ -23,6 +23,8 @@ import CloudResources from "./pages/admin/CloudResources";
 import Optimization from "./pages/admin/Optimization";
 import Reports from "./pages/admin/Reports";
 import AuditLogs from "./pages/admin/AuditLogs";
+import Factories from "./pages/admin/Factories";
+import ProductionLines from "./pages/admin/ProductionLines";
 
 
 function ComingSoon({ title }: { title: string }) {
@@ -69,14 +71,13 @@ function App() {
             element={<Organizations />}
           />
 
-          <Route
-            path="factories"
-            element={<ComingSoon title="Factories" />}
-          />
+          <Route path="factories" element={<Factories />} />
+
+
 
           <Route
             path="production-lines"
-            element={<ComingSoon title="Production Lines" />}
+            element={<ProductionLines />}
           />
 
           <Route

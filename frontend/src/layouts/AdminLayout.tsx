@@ -1,19 +1,22 @@
-
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
-  LayoutDashboard,
-  Building2,
-  Factory,
-  GitBranch,
-  Cpu,
   Activity,
   Bell,
   BrainCircuit,
-  Cloud,
-  Sparkles,
-  FileText,
+  Building2,
+  CheckCircle2,
+  ChevronRight,
   ClipboardList,
+  Cloud,
+  Cpu,
+  FileText,
+  Factory,
+  GitBranch,
+  LayoutDashboard,
+  LogOut,
+  Settings2,
+  Sparkles,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
@@ -74,7 +77,6 @@ const links = [
     path: "/admin/reports",
     icon: FileText,
   },
-
   {
     name: "Audit Logs",
     path: "/admin/audit-logs",
@@ -94,22 +96,22 @@ export default function AdminLayout() {
     )?.name ?? "Dashboard";
 
   return (
-    <div className="min-h-screen bg-slate-100 flex">
+    <div className="min-h-screen bg-slate-100">
       {/* Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-slate-950 text-white flex-col fixed inset-y-0 left-0 z-30">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-slate-800 bg-slate-950 text-white lg:flex">
         {/* Brand */}
-        <div className="px-6 py-6 border-b border-slate-800">
+        <div className="border-b border-slate-800 px-5 py-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold">
-              IQ
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-950/40">
+              <Cpu size={21} />
             </div>
 
-            <div>
-              <h1 className="font-bold text-lg tracking-tight">
+            <div className="min-w-0">
+              <h1 className="truncate text-lg font-bold tracking-tight">
                 Industrial IQ
               </h1>
 
-              <p className="text-xs text-slate-500">
+              <p className="truncate text-[11px] text-slate-500">
                 IoT Optimization Platform
               </p>
             </div>
@@ -117,52 +119,89 @@ export default function AdminLayout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6">
-          <p className="text-xs uppercase tracking-wider text-slate-500 px-3 mb-3">
-            Platform
-          </p>
+        <nav className="flex-1 overflow-y-auto px-3 py-5">
+          <div className="mb-3 flex items-center gap-2 px-3">
+            <Settings2
+              size={13}
+              className="text-slate-600"
+            />
+
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Platform
+            </p>
+          </div>
 
           <div className="space-y-1">
-            {links.map((link) => (
-              <NavLink
-                key={link.path}
-                to={link.path}
-                end={link.path === "/admin"}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${isActive
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-950/30"
-                    : "text-slate-400 hover:bg-slate-900 hover:text-white"
-                  }`
-                }
-              >
+            {links.map((link) => {
+              const Icon = link.icon;
 
-                <link.icon size={18} />
+              return (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  end={link.path === "/admin"}
+                  className={({ isActive }) =>
+                    `group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "bg-blue-600 text-white shadow-md shadow-blue-950/30"
+                        : "text-slate-400 hover:bg-slate-900 hover:text-white"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <Icon
+                        size={18}
+                        strokeWidth={isActive ? 2.3 : 2}
+                        className="shrink-0"
+                      />
 
-                {link.name}
-              </NavLink>
-            ))}
+                      <span className="flex-1">
+                        {link.name}
+                      </span>
+
+                      {isActive && (
+                        <ChevronRight
+                          size={15}
+                          className="text-blue-200"
+                        />
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              );
+            })}
           </div>
         </nav>
 
-        {/* User */}
-        <div className="p-4 border-t border-slate-800">
-          <div className="rounded-xl bg-slate-900 p-4">
-            <p className="text-xs text-slate-500 mb-1">
-              Signed in as
-            </p>
+        {/* User section */}
+        <div className="border-t border-slate-800 p-3">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
+                {user?.name?.charAt(0).toUpperCase() ?? "U"}
+              </div>
 
-            <p className="text-sm font-semibold truncate">
-              {user?.name}
-            </p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-white">
+                  {user?.name}
+                </p>
 
-            <p className="text-xs text-blue-400 mt-1">
-              {user?.role}
-            </p>
+                <div className="mt-1 flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+
+                  <p className="truncate text-[11px] text-slate-400">
+                    {user?.role}
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <button
               onClick={logout}
-              className="mt-4 w-full rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:bg-red-600 hover:border-red-600 hover:text-white transition"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-red-600 hover:bg-red-600 hover:text-white"
             >
+              <LogOut size={15} />
               Sign out
             </button>
           </div>
@@ -170,21 +209,32 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main area */}
-      <div className="flex-1 lg:ml-64">
+      <div className="lg:ml-64">
         {/* Topbar */}
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 lg:px-8 sticky top-0 z-20">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-slate-400">
+        <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-slate-200 bg-white/95 px-5 backdrop-blur lg:px-8">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
               Industrial IoT Platform
             </p>
 
-            <h2 className="text-xl font-bold text-slate-900 mt-1">
-              {currentPage}
-            </h2>
+            <div className="mt-1 flex items-center gap-2">
+              <h2 className="truncate text-xl font-bold text-slate-900">
+                {currentPage}
+              </h2>
+
+              <ChevronRight
+                size={16}
+                className="hidden text-slate-300 sm:block"
+              />
+
+              <span className="hidden text-sm text-slate-400 sm:block">
+                Admin Console
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block text-right">
+          <div className="flex items-center gap-3">
+            <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-slate-900">
                 {user?.name}
               </p>
@@ -194,14 +244,18 @@ export default function AdminLayout() {
               </p>
             </div>
 
-            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-              {user?.name?.charAt(0).toUpperCase() ?? "U"}
+            <div className="relative">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700 ring-4 ring-slate-50">
+                {user?.name?.charAt(0).toUpperCase() ?? "U"}
+              </div>
+
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
             </div>
           </div>
         </header>
 
         {/* Page */}
-        <main className="p-6 lg:p-8">
+        <main className="p-5 lg:p-8">
           <Outlet />
         </main>
       </div>
